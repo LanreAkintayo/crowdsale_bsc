@@ -1,7 +1,7 @@
 const LARToken = artifacts.require("LARToken");
 const LARTokenCrowdsale = artifacts.require("LARTokenCrowdsale");
 
-const bnb = (n) => new web3.BigNumber(web3.toWei(n, "ether"));
+const bnb = (n) => new web3.utils.toBN(web3.utils.toWei(n.toString(), "ether"));
 
 const duration = {
   seconds: function (val) {
@@ -73,8 +73,12 @@ console.log(`Token: ${_token}\nCap: ${_cap}\nGoal:${_goal}`)
  */
 
   await deployedToken.pause();
- await deployedToken.transferOwnership(deployedCrowdsale.address);
+//  await deployedToken.transferOwnership(deployedCrowdsale.address);
  
 
   return true;
 };
+
+
+// LARToken Deployed: 0x57f317B07b31aC5D609AD836b10336e6Bc88Ec4c
+// LARTokenCrowdsale deployed: 0xE229B59d8dA711dCa4699aA27614951d688a691F

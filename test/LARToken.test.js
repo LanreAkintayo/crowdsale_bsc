@@ -1,9 +1,9 @@
-const BigNumber = web3.BigNumber;
+const BN = require('bn.js');
 
 const LARToken = artifacts.require('LARToken');
 
 require('chai')
-  .use(require('chai-bignumber')(BigNumber))
+  .use(require('chai-bn')(BN))
   .should();
 
 contract('LARToken', accounts => {
@@ -28,7 +28,7 @@ contract('LARToken', accounts => {
 
     it('has the correct decimals', async function() {
       const decimals = await this.token.decimals();
-      decimals.should.be.bignumber.equal(_decimals);
+      assert.equal(_decimals, decimals)
     });
   });
  

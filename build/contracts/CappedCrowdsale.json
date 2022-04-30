@@ -18,20 +18,6 @@
     {
       "constant": true,
       "inputs": [],
-      "name": "cap",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
       "name": "weiRaised",
       "outputs": [
         {
@@ -61,7 +47,7 @@
       "constant": false,
       "inputs": [
         {
-          "name": "_beneficiary",
+          "name": "beneficiary",
           "type": "address"
         }
       ],
@@ -88,7 +74,7 @@
     {
       "inputs": [
         {
-          "name": "_cap",
+          "name": "cap",
           "type": "uint256"
         }
       ],
@@ -125,8 +111,22 @@
           "type": "uint256"
         }
       ],
-      "name": "TokenPurchase",
+      "name": "TokensPurchased",
       "type": "event"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "cap",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
     },
     {
       "constant": true,
@@ -147,48 +147,48 @@
   "deployedBytecode": "0x",
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "pragma solidity ^0.4.23;\n\nimport \"../../math/SafeMath.sol\";\nimport \"../Crowdsale.sol\";\n\n\n/**\n * @title CappedCrowdsale\n * @dev Crowdsale with a limit for total contributions.\n */\ncontract CappedCrowdsale is Crowdsale {\n  using SafeMath for uint256;\n\n  uint256 public cap;\n\n  /**\n   * @dev Constructor, takes maximum amount of wei accepted in the crowdsale.\n   * @param _cap Max amount of wei to be contributed\n   */\n  constructor(uint256 _cap) public {\n    require(_cap > 0);\n    cap = _cap;\n  }\n\n  /**\n   * @dev Checks whether the cap has been reached.\n   * @return Whether the cap was reached\n   */\n  function capReached() public view returns (bool) {\n    return weiRaised >= cap;\n  }\n\n  /**\n   * @dev Extend parent behavior requiring purchase to respect the funding cap.\n   * @param _beneficiary Token purchaser\n   * @param _weiAmount Amount of wei contributed\n   */\n  function _preValidatePurchase(\n    address _beneficiary,\n    uint256 _weiAmount\n  )\n    internal\n  {\n    super._preValidatePurchase(_beneficiary, _weiAmount);\n    require(weiRaised.add(_weiAmount) <= cap);\n  }\n\n}\n",
-  "sourcePath": "openzeppelin-solidity/contracts/crowdsale/validation/CappedCrowdsale.sol",
+  "source": "pragma solidity ^0.5.0;\n\nimport \"../../math/SafeMath.sol\";\nimport \"../Crowdsale.sol\";\n\n/**\n * @title CappedCrowdsale\n * @dev Crowdsale with a limit for total contributions.\n */\ncontract CappedCrowdsale is Crowdsale {\n    using SafeMath for uint256;\n\n    uint256 private _cap;\n\n    /**\n     * @dev Constructor, takes maximum amount of wei accepted in the crowdsale.\n     * @param cap Max amount of wei to be contributed\n     */\n    constructor (uint256 cap) public {\n        require(cap > 0, \"CappedCrowdsale: cap is 0\");\n        _cap = cap;\n    }\n\n    /**\n     * @return the cap of the crowdsale.\n     */\n    function cap() public view returns (uint256) {\n        return _cap;\n    }\n\n    /**\n     * @dev Checks whether the cap has been reached.\n     * @return Whether the cap was reached\n     */\n    function capReached() public view returns (bool) {\n        return weiRaised() >= _cap;\n    }\n\n    /**\n     * @dev Extend parent behavior requiring purchase to respect the funding cap.\n     * @param beneficiary Token purchaser\n     * @param weiAmount Amount of wei contributed\n     */\n    function _preValidatePurchase(address beneficiary, uint256 weiAmount) internal view {\n        super._preValidatePurchase(beneficiary, weiAmount);\n        require(weiRaised().add(weiAmount) <= _cap, \"CappedCrowdsale: cap exceeded\");\n    }\n}\n",
+  "sourcePath": "@openzeppelin/contracts/crowdsale/validation/CappedCrowdsale.sol",
   "ast": {
-    "absolutePath": "openzeppelin-solidity/contracts/crowdsale/validation/CappedCrowdsale.sol",
+    "absolutePath": "@openzeppelin/contracts/crowdsale/validation/CappedCrowdsale.sol",
     "exportedSymbols": {
       "CappedCrowdsale": [
-        766
+        1065
       ]
     },
-    "id": 767,
+    "id": 1066,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 706,
+        "id": 993,
         "literals": [
           "solidity",
           "^",
-          "0.4",
-          ".23"
+          "0.5",
+          ".0"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:24:7"
+        "src": "0:23:11"
       },
       {
-        "absolutePath": "openzeppelin-solidity/contracts/math/SafeMath.sol",
+        "absolutePath": "@openzeppelin/contracts/math/SafeMath.sol",
         "file": "../../math/SafeMath.sol",
-        "id": 707,
+        "id": 994,
         "nodeType": "ImportDirective",
-        "scope": 767,
-        "sourceUnit": 1008,
-        "src": "26:33:7",
+        "scope": 1066,
+        "sourceUnit": 1491,
+        "src": "25:33:11",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "absolutePath": "openzeppelin-solidity/contracts/crowdsale/Crowdsale.sol",
+        "absolutePath": "@openzeppelin/contracts/crowdsale/Crowdsale.sol",
         "file": "../Crowdsale.sol",
-        "id": 708,
+        "id": 995,
         "nodeType": "ImportDirective",
-        "scope": 767,
-        "sourceUnit": 354,
-        "src": "60:26:7",
+        "scope": 1066,
+        "sourceUnit": 771,
+        "src": "59:26:11",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -198,56 +198,60 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 709,
+              "id": 996,
               "name": "Crowdsale",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 353,
-              "src": "207:9:7",
+              "referencedDeclaration": 770,
+              "src": "205:9:11",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Crowdsale_$353",
+                "typeIdentifier": "t_contract$_Crowdsale_$770",
                 "typeString": "contract Crowdsale"
               }
             },
-            "id": 710,
+            "id": 997,
             "nodeType": "InheritanceSpecifier",
-            "src": "207:9:7"
+            "src": "205:9:11"
           }
         ],
         "contractDependencies": [
-          353
+          198,
+          770,
+          2872
         ],
         "contractKind": "contract",
         "documentation": "@title CappedCrowdsale\n@dev Crowdsale with a limit for total contributions.",
         "fullyImplemented": false,
-        "id": 766,
+        "id": 1065,
         "linearizedBaseContracts": [
-          766,
-          353
+          1065,
+          770,
+          2872,
+          198
         ],
         "name": "CappedCrowdsale",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
-            "id": 713,
+            "id": 1000,
             "libraryName": {
               "contractScope": null,
-              "id": 711,
+              "id": 998,
               "name": "SafeMath",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1007,
-              "src": "227:8:7",
+              "referencedDeclaration": 1490,
+              "src": "227:8:11",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SafeMath_$1007",
+                "typeIdentifier": "t_contract$_SafeMath_$1490",
                 "typeString": "library SafeMath"
               }
             },
             "nodeType": "UsingForDirective",
-            "src": "221:27:7",
+            "src": "221:27:11",
             "typeName": {
-              "id": 712,
+              "id": 999,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
-              "src": "240:7:7",
+              "src": "240:7:11",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -256,11 +260,11 @@
           },
           {
             "constant": false,
-            "id": 715,
-            "name": "cap",
+            "id": 1002,
+            "name": "_cap",
             "nodeType": "VariableDeclaration",
-            "scope": 766,
-            "src": "252:18:7",
+            "scope": 1065,
+            "src": "254:20:11",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -268,23 +272,23 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 714,
+              "id": 1001,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
-              "src": "252:7:7",
+              "src": "254:7:11",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
               }
             },
             "value": null,
-            "visibility": "public"
+            "visibility": "private"
           },
           {
             "body": {
-              "id": 730,
+              "id": 1018,
               "nodeType": "Block",
-              "src": "451:44:7",
+              "src": "464:82:11",
               "statements": [
                 {
                   "expression": {
@@ -296,19 +300,19 @@
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
                         },
-                        "id": 723,
+                        "id": 1010,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
                           "argumentTypes": null,
-                          "id": 721,
-                          "name": "_cap",
+                          "id": 1008,
+                          "name": "cap",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 717,
-                          "src": "465:4:7",
+                          "referencedDeclaration": 1004,
+                          "src": "482:3:11",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -319,14 +323,14 @@
                         "rightExpression": {
                           "argumentTypes": null,
                           "hexValue": "30",
-                          "id": 722,
+                          "id": 1009,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "kind": "number",
                           "lValueRequested": false,
                           "nodeType": "Literal",
-                          "src": "472:1:7",
+                          "src": "488:1:11",
                           "subdenomination": null,
                           "typeDescriptions": {
                             "typeIdentifier": "t_rational_0_by_1",
@@ -334,11 +338,29 @@
                           },
                           "value": "0"
                         },
-                        "src": "465:8:7",
+                        "src": "482:7:11",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bool",
                           "typeString": "bool"
                         }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "43617070656443726f776473616c653a206361702069732030",
+                        "id": 1011,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "491:27:11",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_64e5a6167e9149487c39484a18ce5d080c5288b2e26eed530ccbcf3220dc9f14",
+                          "typeString": "literal_string \"CappedCrowdsale: cap is 0\""
+                        },
+                        "value": "CappedCrowdsale: cap is 0"
                       }
                     ],
                     "expression": {
@@ -346,23 +368,27 @@
                         {
                           "typeIdentifier": "t_bool",
                           "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_64e5a6167e9149487c39484a18ce5d080c5288b2e26eed530ccbcf3220dc9f14",
+                          "typeString": "literal_string \"CappedCrowdsale: cap is 0\""
                         }
                       ],
-                      "id": 720,
+                      "id": 1007,
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        1771,
-                        1772
+                        2890,
+                        2891
                       ],
-                      "referencedDeclaration": 1771,
-                      "src": "457:7:7",
+                      "referencedDeclaration": 2891,
+                      "src": "474:7:11",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
-                        "typeString": "function (bool) pure"
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
                       }
                     },
-                    "id": 724,
+                    "id": 1012,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -370,32 +396,32 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "457:17:7",
+                    "src": "474:45:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 725,
+                  "id": 1013,
                   "nodeType": "ExpressionStatement",
-                  "src": "457:17:7"
+                  "src": "474:45:11"
                 },
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 728,
+                    "id": 1016,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
                       "argumentTypes": null,
-                      "id": 726,
-                      "name": "cap",
+                      "id": 1014,
+                      "name": "_cap",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 715,
-                      "src": "480:3:7",
+                      "referencedDeclaration": 1002,
+                      "src": "529:4:11",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -405,48 +431,47 @@
                     "operator": "=",
                     "rightHandSide": {
                       "argumentTypes": null,
-                      "id": 727,
-                      "name": "_cap",
+                      "id": 1015,
+                      "name": "cap",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 717,
-                      "src": "486:4:7",
+                      "referencedDeclaration": 1004,
+                      "src": "536:3:11",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "src": "480:10:7",
+                    "src": "529:10:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "id": 729,
+                  "id": 1017,
                   "nodeType": "ExpressionStatement",
-                  "src": "480:10:7"
+                  "src": "529:10:11"
                 }
               ]
             },
-            "documentation": "@dev Constructor, takes maximum amount of wei accepted in the crowdsale.\n@param _cap Max amount of wei to be contributed",
-            "id": 731,
+            "documentation": "@dev Constructor, takes maximum amount of wei accepted in the crowdsale.\n@param cap Max amount of wei to be contributed",
+            "id": 1019,
             "implemented": true,
-            "isConstructor": true,
-            "isDeclaredConst": false,
+            "kind": "constructor",
             "modifiers": [],
             "name": "",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 718,
+              "id": 1005,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 717,
-                  "name": "_cap",
+                  "id": 1004,
+                  "name": "cap",
                   "nodeType": "VariableDeclaration",
-                  "scope": 731,
-                  "src": "430:12:7",
+                  "scope": 1019,
+                  "src": "444:11:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -454,10 +479,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 716,
+                    "id": 1003,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "430:7:7",
+                    "src": "444:7:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -467,26 +492,104 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "429:14:7"
+              "src": "443:13:11"
             },
-            "payable": false,
             "returnParameters": {
-              "id": 719,
+              "id": 1006,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "451:0:7"
+              "src": "464:0:11"
             },
-            "scope": 766,
-            "src": "418:77:7",
+            "scope": 1065,
+            "src": "431:115:11",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 740,
+              "id": 1026,
               "nodeType": "Block",
-              "src": "652:34:7",
+              "src": "654:28:11",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 1024,
+                    "name": "_cap",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 1002,
+                    "src": "671:4:11",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 1023,
+                  "id": 1025,
+                  "nodeType": "Return",
+                  "src": "664:11:11"
+                }
+              ]
+            },
+            "documentation": "@return the cap of the crowdsale.",
+            "id": 1027,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "cap",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1020,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "621:2:11"
+            },
+            "returnParameters": {
+              "id": 1023,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1022,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1027,
+                  "src": "645:7:11",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1021,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "645:7:11",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "644:9:11"
+            },
+            "scope": 1065,
+            "src": "609:73:11",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1037,
+              "nodeType": "Block",
+              "src": "849:43:11",
               "statements": [
                 {
                   "expression": {
@@ -495,19 +598,36 @@
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     },
-                    "id": 738,
+                    "id": 1035,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftExpression": {
                       "argumentTypes": null,
-                      "id": 736,
-                      "name": "weiRaised",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": [],
-                      "referencedDeclaration": 144,
-                      "src": "665:9:7",
+                      "arguments": [],
+                      "expression": {
+                        "argumentTypes": [],
+                        "id": 1032,
+                        "name": "weiRaised",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 618,
+                        "src": "866:9:11",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_view$__$returns$_t_uint256_$",
+                          "typeString": "function () view returns (uint256)"
+                        }
+                      },
+                      "id": 1033,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "866:11:11",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -517,56 +637,54 @@
                     "operator": ">=",
                     "rightExpression": {
                       "argumentTypes": null,
-                      "id": 737,
-                      "name": "cap",
+                      "id": 1034,
+                      "name": "_cap",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 715,
-                      "src": "678:3:7",
+                      "referencedDeclaration": 1002,
+                      "src": "881:4:11",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "src": "665:16:7",
+                    "src": "866:19:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
                     }
                   },
-                  "functionReturnParameters": 735,
-                  "id": 739,
+                  "functionReturnParameters": 1031,
+                  "id": 1036,
                   "nodeType": "Return",
-                  "src": "658:23:7"
+                  "src": "859:26:11"
                 }
               ]
             },
             "documentation": "@dev Checks whether the cap has been reached.\n@return Whether the cap was reached",
-            "id": 741,
+            "id": 1038,
             "implemented": true,
-            "isConstructor": false,
-            "isDeclaredConst": true,
+            "kind": "function",
             "modifiers": [],
             "name": "capReached",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 732,
+              "id": 1028,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "622:2:7"
+              "src": "819:2:11"
             },
-            "payable": false,
             "returnParameters": {
-              "id": 735,
+              "id": 1031,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 734,
+                  "id": 1030,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 741,
-                  "src": "646:4:7",
+                  "scope": 1038,
+                  "src": "843:4:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -574,10 +692,10 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 733,
+                    "id": 1029,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "646:4:7",
+                    "src": "843:4:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -587,19 +705,19 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "645:6:7"
+              "src": "842:6:11"
             },
-            "scope": 766,
-            "src": "603:83:7",
+            "scope": 1065,
+            "src": "800:92:11",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 764,
+              "id": 1063,
               "nodeType": "Block",
-              "src": "971:110:7",
+              "src": "1172:153:11",
               "statements": [
                 {
                   "expression": {
@@ -607,12 +725,12 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 751,
-                        "name": "_beneficiary",
+                        "id": 1048,
+                        "name": "beneficiary",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 743,
-                        "src": "1004:12:7",
+                        "referencedDeclaration": 1040,
+                        "src": "1209:11:11",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
                           "typeString": "address"
@@ -620,12 +738,12 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 752,
-                        "name": "_weiAmount",
+                        "id": 1049,
+                        "name": "weiAmount",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 745,
-                        "src": "1018:10:7",
+                        "referencedDeclaration": 1042,
+                        "src": "1222:9:11",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -645,32 +763,32 @@
                       ],
                       "expression": {
                         "argumentTypes": null,
-                        "id": 748,
+                        "id": 1045,
                         "name": "super",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1808,
-                        "src": "977:5:7",
+                        "referencedDeclaration": 2936,
+                        "src": "1182:5:11",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_super$_CappedCrowdsale_$766",
+                          "typeIdentifier": "t_super$_CappedCrowdsale_$1065",
                           "typeString": "contract super CappedCrowdsale"
                         }
                       },
-                      "id": 750,
+                      "id": 1047,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "memberName": "_preValidatePurchase",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 284,
-                      "src": "977:26:7",
+                      "referencedDeclaration": 701,
+                      "src": "1182:26:11",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_uint256_$returns$__$",
-                        "typeString": "function (address,uint256)"
+                        "typeIdentifier": "t_function_internal_view$_t_address_$_t_uint256_$returns$__$",
+                        "typeString": "function (address,uint256) view"
                       }
                     },
-                    "id": 753,
+                    "id": 1050,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -678,15 +796,15 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "977:52:7",
+                    "src": "1182:50:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 754,
+                  "id": 1051,
                   "nodeType": "ExpressionStatement",
-                  "src": "977:52:7"
+                  "src": "1182:50:11"
                 },
                 {
                   "expression": {
@@ -698,7 +816,7 @@
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
                         },
-                        "id": 761,
+                        "id": 1059,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -708,12 +826,12 @@
                           "arguments": [
                             {
                               "argumentTypes": null,
-                              "id": 758,
-                              "name": "_weiAmount",
+                              "id": 1056,
+                              "name": "weiAmount",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 745,
-                              "src": "1057:10:7",
+                              "referencedDeclaration": 1042,
+                              "src": "1266:9:11",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
@@ -729,32 +847,49 @@
                             ],
                             "expression": {
                               "argumentTypes": null,
-                              "id": 756,
-                              "name": "weiRaised",
-                              "nodeType": "Identifier",
-                              "overloadedDeclarations": [],
-                              "referencedDeclaration": 144,
-                              "src": "1043:9:7",
+                              "arguments": [],
+                              "expression": {
+                                "argumentTypes": [],
+                                "id": 1053,
+                                "name": "weiRaised",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 618,
+                                "src": "1250:9:11",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_function_internal_view$__$returns$_t_uint256_$",
+                                  "typeString": "function () view returns (uint256)"
+                                }
+                              },
+                              "id": 1054,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "kind": "functionCall",
+                              "lValueRequested": false,
+                              "names": [],
+                              "nodeType": "FunctionCall",
+                              "src": "1250:11:11",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
                               }
                             },
-                            "id": 757,
+                            "id": 1055,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": false,
                             "lValueRequested": false,
                             "memberName": "add",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 1006,
-                            "src": "1043:13:7",
+                            "referencedDeclaration": 1330,
+                            "src": "1250:15:11",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
                               "typeString": "function (uint256,uint256) pure returns (uint256)"
                             }
                           },
-                          "id": 759,
+                          "id": 1057,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -762,7 +897,7 @@
                           "lValueRequested": false,
                           "names": [],
                           "nodeType": "FunctionCall",
-                          "src": "1043:25:7",
+                          "src": "1250:26:11",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -772,22 +907,40 @@
                         "operator": "<=",
                         "rightExpression": {
                           "argumentTypes": null,
-                          "id": 760,
-                          "name": "cap",
+                          "id": 1058,
+                          "name": "_cap",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 715,
-                          "src": "1072:3:7",
+                          "referencedDeclaration": 1002,
+                          "src": "1280:4:11",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
                           }
                         },
-                        "src": "1043:32:7",
+                        "src": "1250:34:11",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bool",
                           "typeString": "bool"
                         }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "43617070656443726f776473616c653a20636170206578636565646564",
+                        "id": 1060,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1286:31:11",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_2c4df665e7843abc0c81818f3beddf3ec071d2283193f32a87d6b4d1c758ed74",
+                          "typeString": "literal_string \"CappedCrowdsale: cap exceeded\""
+                        },
+                        "value": "CappedCrowdsale: cap exceeded"
                       }
                     ],
                     "expression": {
@@ -795,23 +948,27 @@
                         {
                           "typeIdentifier": "t_bool",
                           "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_2c4df665e7843abc0c81818f3beddf3ec071d2283193f32a87d6b4d1c758ed74",
+                          "typeString": "literal_string \"CappedCrowdsale: cap exceeded\""
                         }
                       ],
-                      "id": 755,
+                      "id": 1052,
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        1771,
-                        1772
+                        2890,
+                        2891
                       ],
-                      "referencedDeclaration": 1771,
-                      "src": "1035:7:7",
+                      "referencedDeclaration": 2891,
+                      "src": "1242:7:11",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
-                        "typeString": "function (bool) pure"
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
                       }
                     },
-                    "id": 762,
+                    "id": 1061,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -819,37 +976,36 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "1035:41:7",
+                    "src": "1242:76:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 763,
+                  "id": 1062,
                   "nodeType": "ExpressionStatement",
-                  "src": "1035:41:7"
+                  "src": "1242:76:11"
                 }
               ]
             },
-            "documentation": "@dev Extend parent behavior requiring purchase to respect the funding cap.\n@param _beneficiary Token purchaser\n@param _weiAmount Amount of wei contributed",
-            "id": 765,
+            "documentation": "@dev Extend parent behavior requiring purchase to respect the funding cap.\n@param beneficiary Token purchaser\n@param weiAmount Amount of wei contributed",
+            "id": 1064,
             "implemented": true,
-            "isConstructor": false,
-            "isDeclaredConst": false,
+            "kind": "function",
             "modifiers": [],
             "name": "_preValidatePurchase",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 746,
+              "id": 1043,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 743,
-                  "name": "_beneficiary",
+                  "id": 1040,
+                  "name": "beneficiary",
                   "nodeType": "VariableDeclaration",
-                  "scope": 765,
-                  "src": "907:20:7",
+                  "scope": 1064,
+                  "src": "1118:19:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -857,10 +1013,11 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 742,
+                    "id": 1039,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "907:7:7",
+                    "src": "1118:7:11",
+                    "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
                       "typeString": "address"
@@ -871,11 +1028,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 745,
-                  "name": "_weiAmount",
+                  "id": 1042,
+                  "name": "weiAmount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 765,
-                  "src": "933:18:7",
+                  "scope": 1064,
+                  "src": "1139:17:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -883,10 +1040,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 744,
+                    "id": 1041,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "933:7:7",
+                    "src": "1139:7:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -896,68 +1053,67 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "901:54:7"
+              "src": "1117:40:11"
             },
-            "payable": false,
             "returnParameters": {
-              "id": 747,
+              "id": 1044,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "971:0:7"
+              "src": "1172:0:11"
             },
-            "scope": 766,
-            "src": "872:209:7",
-            "stateMutability": "nonpayable",
-            "superFunction": 284,
+            "scope": 1065,
+            "src": "1088:237:11",
+            "stateMutability": "view",
+            "superFunction": 701,
             "visibility": "internal"
           }
         ],
-        "scope": 767,
-        "src": "179:905:7"
+        "scope": 1066,
+        "src": "177:1150:11"
       }
     ],
-    "src": "0:1085:7"
+    "src": "0:1328:11"
   },
   "legacyAST": {
-    "absolutePath": "openzeppelin-solidity/contracts/crowdsale/validation/CappedCrowdsale.sol",
+    "absolutePath": "@openzeppelin/contracts/crowdsale/validation/CappedCrowdsale.sol",
     "exportedSymbols": {
       "CappedCrowdsale": [
-        766
+        1065
       ]
     },
-    "id": 767,
+    "id": 1066,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 706,
+        "id": 993,
         "literals": [
           "solidity",
           "^",
-          "0.4",
-          ".23"
+          "0.5",
+          ".0"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:24:7"
+        "src": "0:23:11"
       },
       {
-        "absolutePath": "openzeppelin-solidity/contracts/math/SafeMath.sol",
+        "absolutePath": "@openzeppelin/contracts/math/SafeMath.sol",
         "file": "../../math/SafeMath.sol",
-        "id": 707,
+        "id": 994,
         "nodeType": "ImportDirective",
-        "scope": 767,
-        "sourceUnit": 1008,
-        "src": "26:33:7",
+        "scope": 1066,
+        "sourceUnit": 1491,
+        "src": "25:33:11",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "absolutePath": "openzeppelin-solidity/contracts/crowdsale/Crowdsale.sol",
+        "absolutePath": "@openzeppelin/contracts/crowdsale/Crowdsale.sol",
         "file": "../Crowdsale.sol",
-        "id": 708,
+        "id": 995,
         "nodeType": "ImportDirective",
-        "scope": 767,
-        "sourceUnit": 354,
-        "src": "60:26:7",
+        "scope": 1066,
+        "sourceUnit": 771,
+        "src": "59:26:11",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -967,56 +1123,60 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 709,
+              "id": 996,
               "name": "Crowdsale",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 353,
-              "src": "207:9:7",
+              "referencedDeclaration": 770,
+              "src": "205:9:11",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_Crowdsale_$353",
+                "typeIdentifier": "t_contract$_Crowdsale_$770",
                 "typeString": "contract Crowdsale"
               }
             },
-            "id": 710,
+            "id": 997,
             "nodeType": "InheritanceSpecifier",
-            "src": "207:9:7"
+            "src": "205:9:11"
           }
         ],
         "contractDependencies": [
-          353
+          198,
+          770,
+          2872
         ],
         "contractKind": "contract",
         "documentation": "@title CappedCrowdsale\n@dev Crowdsale with a limit for total contributions.",
         "fullyImplemented": false,
-        "id": 766,
+        "id": 1065,
         "linearizedBaseContracts": [
-          766,
-          353
+          1065,
+          770,
+          2872,
+          198
         ],
         "name": "CappedCrowdsale",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
-            "id": 713,
+            "id": 1000,
             "libraryName": {
               "contractScope": null,
-              "id": 711,
+              "id": 998,
               "name": "SafeMath",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1007,
-              "src": "227:8:7",
+              "referencedDeclaration": 1490,
+              "src": "227:8:11",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SafeMath_$1007",
+                "typeIdentifier": "t_contract$_SafeMath_$1490",
                 "typeString": "library SafeMath"
               }
             },
             "nodeType": "UsingForDirective",
-            "src": "221:27:7",
+            "src": "221:27:11",
             "typeName": {
-              "id": 712,
+              "id": 999,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
-              "src": "240:7:7",
+              "src": "240:7:11",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
@@ -1025,11 +1185,11 @@
           },
           {
             "constant": false,
-            "id": 715,
-            "name": "cap",
+            "id": 1002,
+            "name": "_cap",
             "nodeType": "VariableDeclaration",
-            "scope": 766,
-            "src": "252:18:7",
+            "scope": 1065,
+            "src": "254:20:11",
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -1037,23 +1197,23 @@
               "typeString": "uint256"
             },
             "typeName": {
-              "id": 714,
+              "id": 1001,
               "name": "uint256",
               "nodeType": "ElementaryTypeName",
-              "src": "252:7:7",
+              "src": "254:7:11",
               "typeDescriptions": {
                 "typeIdentifier": "t_uint256",
                 "typeString": "uint256"
               }
             },
             "value": null,
-            "visibility": "public"
+            "visibility": "private"
           },
           {
             "body": {
-              "id": 730,
+              "id": 1018,
               "nodeType": "Block",
-              "src": "451:44:7",
+              "src": "464:82:11",
               "statements": [
                 {
                   "expression": {
@@ -1065,19 +1225,19 @@
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
                         },
-                        "id": 723,
+                        "id": 1010,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
                         "lValueRequested": false,
                         "leftExpression": {
                           "argumentTypes": null,
-                          "id": 721,
-                          "name": "_cap",
+                          "id": 1008,
+                          "name": "cap",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 717,
-                          "src": "465:4:7",
+                          "referencedDeclaration": 1004,
+                          "src": "482:3:11",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -1088,14 +1248,14 @@
                         "rightExpression": {
                           "argumentTypes": null,
                           "hexValue": "30",
-                          "id": 722,
+                          "id": 1009,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
                           "kind": "number",
                           "lValueRequested": false,
                           "nodeType": "Literal",
-                          "src": "472:1:7",
+                          "src": "488:1:11",
                           "subdenomination": null,
                           "typeDescriptions": {
                             "typeIdentifier": "t_rational_0_by_1",
@@ -1103,11 +1263,29 @@
                           },
                           "value": "0"
                         },
-                        "src": "465:8:7",
+                        "src": "482:7:11",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bool",
                           "typeString": "bool"
                         }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "43617070656443726f776473616c653a206361702069732030",
+                        "id": 1011,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "491:27:11",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_64e5a6167e9149487c39484a18ce5d080c5288b2e26eed530ccbcf3220dc9f14",
+                          "typeString": "literal_string \"CappedCrowdsale: cap is 0\""
+                        },
+                        "value": "CappedCrowdsale: cap is 0"
                       }
                     ],
                     "expression": {
@@ -1115,23 +1293,27 @@
                         {
                           "typeIdentifier": "t_bool",
                           "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_64e5a6167e9149487c39484a18ce5d080c5288b2e26eed530ccbcf3220dc9f14",
+                          "typeString": "literal_string \"CappedCrowdsale: cap is 0\""
                         }
                       ],
-                      "id": 720,
+                      "id": 1007,
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        1771,
-                        1772
+                        2890,
+                        2891
                       ],
-                      "referencedDeclaration": 1771,
-                      "src": "457:7:7",
+                      "referencedDeclaration": 2891,
+                      "src": "474:7:11",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
-                        "typeString": "function (bool) pure"
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
                       }
                     },
-                    "id": 724,
+                    "id": 1012,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1139,32 +1321,32 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "457:17:7",
+                    "src": "474:45:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 725,
+                  "id": 1013,
                   "nodeType": "ExpressionStatement",
-                  "src": "457:17:7"
+                  "src": "474:45:11"
                 },
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 728,
+                    "id": 1016,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
                       "argumentTypes": null,
-                      "id": 726,
-                      "name": "cap",
+                      "id": 1014,
+                      "name": "_cap",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 715,
-                      "src": "480:3:7",
+                      "referencedDeclaration": 1002,
+                      "src": "529:4:11",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -1174,48 +1356,47 @@
                     "operator": "=",
                     "rightHandSide": {
                       "argumentTypes": null,
-                      "id": 727,
-                      "name": "_cap",
+                      "id": 1015,
+                      "name": "cap",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 717,
-                      "src": "486:4:7",
+                      "referencedDeclaration": 1004,
+                      "src": "536:3:11",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "src": "480:10:7",
+                    "src": "529:10:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "id": 729,
+                  "id": 1017,
                   "nodeType": "ExpressionStatement",
-                  "src": "480:10:7"
+                  "src": "529:10:11"
                 }
               ]
             },
-            "documentation": "@dev Constructor, takes maximum amount of wei accepted in the crowdsale.\n@param _cap Max amount of wei to be contributed",
-            "id": 731,
+            "documentation": "@dev Constructor, takes maximum amount of wei accepted in the crowdsale.\n@param cap Max amount of wei to be contributed",
+            "id": 1019,
             "implemented": true,
-            "isConstructor": true,
-            "isDeclaredConst": false,
+            "kind": "constructor",
             "modifiers": [],
             "name": "",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 718,
+              "id": 1005,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 717,
-                  "name": "_cap",
+                  "id": 1004,
+                  "name": "cap",
                   "nodeType": "VariableDeclaration",
-                  "scope": 731,
-                  "src": "430:12:7",
+                  "scope": 1019,
+                  "src": "444:11:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1223,10 +1404,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 716,
+                    "id": 1003,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "430:7:7",
+                    "src": "444:7:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1236,26 +1417,104 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "429:14:7"
+              "src": "443:13:11"
             },
-            "payable": false,
             "returnParameters": {
-              "id": 719,
+              "id": 1006,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "451:0:7"
+              "src": "464:0:11"
             },
-            "scope": 766,
-            "src": "418:77:7",
+            "scope": 1065,
+            "src": "431:115:11",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 740,
+              "id": 1026,
               "nodeType": "Block",
-              "src": "652:34:7",
+              "src": "654:28:11",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 1024,
+                    "name": "_cap",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 1002,
+                    "src": "671:4:11",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 1023,
+                  "id": 1025,
+                  "nodeType": "Return",
+                  "src": "664:11:11"
+                }
+              ]
+            },
+            "documentation": "@return the cap of the crowdsale.",
+            "id": 1027,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "cap",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1020,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "621:2:11"
+            },
+            "returnParameters": {
+              "id": 1023,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1022,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1027,
+                  "src": "645:7:11",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1021,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "645:7:11",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "644:9:11"
+            },
+            "scope": 1065,
+            "src": "609:73:11",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1037,
+              "nodeType": "Block",
+              "src": "849:43:11",
               "statements": [
                 {
                   "expression": {
@@ -1264,19 +1523,36 @@
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     },
-                    "id": 738,
+                    "id": 1035,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftExpression": {
                       "argumentTypes": null,
-                      "id": 736,
-                      "name": "weiRaised",
-                      "nodeType": "Identifier",
-                      "overloadedDeclarations": [],
-                      "referencedDeclaration": 144,
-                      "src": "665:9:7",
+                      "arguments": [],
+                      "expression": {
+                        "argumentTypes": [],
+                        "id": 1032,
+                        "name": "weiRaised",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 618,
+                        "src": "866:9:11",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_view$__$returns$_t_uint256_$",
+                          "typeString": "function () view returns (uint256)"
+                        }
+                      },
+                      "id": 1033,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "866:11:11",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -1286,56 +1562,54 @@
                     "operator": ">=",
                     "rightExpression": {
                       "argumentTypes": null,
-                      "id": 737,
-                      "name": "cap",
+                      "id": 1034,
+                      "name": "_cap",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 715,
-                      "src": "678:3:7",
+                      "referencedDeclaration": 1002,
+                      "src": "881:4:11",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "src": "665:16:7",
+                    "src": "866:19:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
                     }
                   },
-                  "functionReturnParameters": 735,
-                  "id": 739,
+                  "functionReturnParameters": 1031,
+                  "id": 1036,
                   "nodeType": "Return",
-                  "src": "658:23:7"
+                  "src": "859:26:11"
                 }
               ]
             },
             "documentation": "@dev Checks whether the cap has been reached.\n@return Whether the cap was reached",
-            "id": 741,
+            "id": 1038,
             "implemented": true,
-            "isConstructor": false,
-            "isDeclaredConst": true,
+            "kind": "function",
             "modifiers": [],
             "name": "capReached",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 732,
+              "id": 1028,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "622:2:7"
+              "src": "819:2:11"
             },
-            "payable": false,
             "returnParameters": {
-              "id": 735,
+              "id": 1031,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 734,
+                  "id": 1030,
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 741,
-                  "src": "646:4:7",
+                  "scope": 1038,
+                  "src": "843:4:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1343,10 +1617,10 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 733,
+                    "id": 1029,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "646:4:7",
+                    "src": "843:4:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -1356,19 +1630,19 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "645:6:7"
+              "src": "842:6:11"
             },
-            "scope": 766,
-            "src": "603:83:7",
+            "scope": 1065,
+            "src": "800:92:11",
             "stateMutability": "view",
             "superFunction": null,
             "visibility": "public"
           },
           {
             "body": {
-              "id": 764,
+              "id": 1063,
               "nodeType": "Block",
-              "src": "971:110:7",
+              "src": "1172:153:11",
               "statements": [
                 {
                   "expression": {
@@ -1376,12 +1650,12 @@
                     "arguments": [
                       {
                         "argumentTypes": null,
-                        "id": 751,
-                        "name": "_beneficiary",
+                        "id": 1048,
+                        "name": "beneficiary",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 743,
-                        "src": "1004:12:7",
+                        "referencedDeclaration": 1040,
+                        "src": "1209:11:11",
                         "typeDescriptions": {
                           "typeIdentifier": "t_address",
                           "typeString": "address"
@@ -1389,12 +1663,12 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 752,
-                        "name": "_weiAmount",
+                        "id": 1049,
+                        "name": "weiAmount",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 745,
-                        "src": "1018:10:7",
+                        "referencedDeclaration": 1042,
+                        "src": "1222:9:11",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
@@ -1414,32 +1688,32 @@
                       ],
                       "expression": {
                         "argumentTypes": null,
-                        "id": 748,
+                        "id": 1045,
                         "name": "super",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 1808,
-                        "src": "977:5:7",
+                        "referencedDeclaration": 2936,
+                        "src": "1182:5:11",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_super$_CappedCrowdsale_$766",
+                          "typeIdentifier": "t_super$_CappedCrowdsale_$1065",
                           "typeString": "contract super CappedCrowdsale"
                         }
                       },
-                      "id": 750,
+                      "id": 1047,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "memberName": "_preValidatePurchase",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 284,
-                      "src": "977:26:7",
+                      "referencedDeclaration": 701,
+                      "src": "1182:26:11",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_uint256_$returns$__$",
-                        "typeString": "function (address,uint256)"
+                        "typeIdentifier": "t_function_internal_view$_t_address_$_t_uint256_$returns$__$",
+                        "typeString": "function (address,uint256) view"
                       }
                     },
-                    "id": 753,
+                    "id": 1050,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1447,15 +1721,15 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "977:52:7",
+                    "src": "1182:50:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 754,
+                  "id": 1051,
                   "nodeType": "ExpressionStatement",
-                  "src": "977:52:7"
+                  "src": "1182:50:11"
                 },
                 {
                   "expression": {
@@ -1467,7 +1741,7 @@
                           "typeIdentifier": "t_uint256",
                           "typeString": "uint256"
                         },
-                        "id": 761,
+                        "id": 1059,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1477,12 +1751,12 @@
                           "arguments": [
                             {
                               "argumentTypes": null,
-                              "id": 758,
-                              "name": "_weiAmount",
+                              "id": 1056,
+                              "name": "weiAmount",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 745,
-                              "src": "1057:10:7",
+                              "referencedDeclaration": 1042,
+                              "src": "1266:9:11",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
@@ -1498,32 +1772,49 @@
                             ],
                             "expression": {
                               "argumentTypes": null,
-                              "id": 756,
-                              "name": "weiRaised",
-                              "nodeType": "Identifier",
-                              "overloadedDeclarations": [],
-                              "referencedDeclaration": 144,
-                              "src": "1043:9:7",
+                              "arguments": [],
+                              "expression": {
+                                "argumentTypes": [],
+                                "id": 1053,
+                                "name": "weiRaised",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 618,
+                                "src": "1250:9:11",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_function_internal_view$__$returns$_t_uint256_$",
+                                  "typeString": "function () view returns (uint256)"
+                                }
+                              },
+                              "id": 1054,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "kind": "functionCall",
+                              "lValueRequested": false,
+                              "names": [],
+                              "nodeType": "FunctionCall",
+                              "src": "1250:11:11",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
                               }
                             },
-                            "id": 757,
+                            "id": 1055,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": false,
                             "lValueRequested": false,
                             "memberName": "add",
                             "nodeType": "MemberAccess",
-                            "referencedDeclaration": 1006,
-                            "src": "1043:13:7",
+                            "referencedDeclaration": 1330,
+                            "src": "1250:15:11",
                             "typeDescriptions": {
                               "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$bound_to$_t_uint256_$",
                               "typeString": "function (uint256,uint256) pure returns (uint256)"
                             }
                           },
-                          "id": 759,
+                          "id": 1057,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -1531,7 +1822,7 @@
                           "lValueRequested": false,
                           "names": [],
                           "nodeType": "FunctionCall",
-                          "src": "1043:25:7",
+                          "src": "1250:26:11",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -1541,22 +1832,40 @@
                         "operator": "<=",
                         "rightExpression": {
                           "argumentTypes": null,
-                          "id": 760,
-                          "name": "cap",
+                          "id": 1058,
+                          "name": "_cap",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 715,
-                          "src": "1072:3:7",
+                          "referencedDeclaration": 1002,
+                          "src": "1280:4:11",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
                           }
                         },
-                        "src": "1043:32:7",
+                        "src": "1250:34:11",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bool",
                           "typeString": "bool"
                         }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "43617070656443726f776473616c653a20636170206578636565646564",
+                        "id": 1060,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1286:31:11",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_2c4df665e7843abc0c81818f3beddf3ec071d2283193f32a87d6b4d1c758ed74",
+                          "typeString": "literal_string \"CappedCrowdsale: cap exceeded\""
+                        },
+                        "value": "CappedCrowdsale: cap exceeded"
                       }
                     ],
                     "expression": {
@@ -1564,23 +1873,27 @@
                         {
                           "typeIdentifier": "t_bool",
                           "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_2c4df665e7843abc0c81818f3beddf3ec071d2283193f32a87d6b4d1c758ed74",
+                          "typeString": "literal_string \"CappedCrowdsale: cap exceeded\""
                         }
                       ],
-                      "id": 755,
+                      "id": 1052,
                       "name": "require",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [
-                        1771,
-                        1772
+                        2890,
+                        2891
                       ],
-                      "referencedDeclaration": 1771,
-                      "src": "1035:7:7",
+                      "referencedDeclaration": 2891,
+                      "src": "1242:7:11",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_require_pure$_t_bool_$returns$__$",
-                        "typeString": "function (bool) pure"
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
                       }
                     },
-                    "id": 762,
+                    "id": 1061,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1588,37 +1901,36 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "1035:41:7",
+                    "src": "1242:76:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_tuple$__$",
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 763,
+                  "id": 1062,
                   "nodeType": "ExpressionStatement",
-                  "src": "1035:41:7"
+                  "src": "1242:76:11"
                 }
               ]
             },
-            "documentation": "@dev Extend parent behavior requiring purchase to respect the funding cap.\n@param _beneficiary Token purchaser\n@param _weiAmount Amount of wei contributed",
-            "id": 765,
+            "documentation": "@dev Extend parent behavior requiring purchase to respect the funding cap.\n@param beneficiary Token purchaser\n@param weiAmount Amount of wei contributed",
+            "id": 1064,
             "implemented": true,
-            "isConstructor": false,
-            "isDeclaredConst": false,
+            "kind": "function",
             "modifiers": [],
             "name": "_preValidatePurchase",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 746,
+              "id": 1043,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 743,
-                  "name": "_beneficiary",
+                  "id": 1040,
+                  "name": "beneficiary",
                   "nodeType": "VariableDeclaration",
-                  "scope": 765,
-                  "src": "907:20:7",
+                  "scope": 1064,
+                  "src": "1118:19:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1626,10 +1938,11 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 742,
+                    "id": 1039,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "907:7:7",
+                    "src": "1118:7:11",
+                    "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
                       "typeString": "address"
@@ -1640,11 +1953,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 745,
-                  "name": "_weiAmount",
+                  "id": 1042,
+                  "name": "weiAmount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 765,
-                  "src": "933:18:7",
+                  "scope": 1064,
+                  "src": "1139:17:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1652,10 +1965,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 744,
+                    "id": 1041,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "933:7:7",
+                    "src": "1139:7:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1665,33 +1978,72 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "901:54:7"
+              "src": "1117:40:11"
             },
-            "payable": false,
             "returnParameters": {
-              "id": 747,
+              "id": 1044,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "971:0:7"
+              "src": "1172:0:11"
             },
-            "scope": 766,
-            "src": "872:209:7",
-            "stateMutability": "nonpayable",
-            "superFunction": 284,
+            "scope": 1065,
+            "src": "1088:237:11",
+            "stateMutability": "view",
+            "superFunction": 701,
             "visibility": "internal"
           }
         ],
-        "scope": 767,
-        "src": "179:905:7"
+        "scope": 1066,
+        "src": "177:1150:11"
       }
     ],
-    "src": "0:1085:7"
+    "src": "0:1328:11"
   },
   "compiler": {
     "name": "solc",
-    "version": "0.4.24+commit.e67f0147.Emscripten.clang"
+    "version": "0.5.5+commit.47a71e8f.Emscripten.clang"
   },
   "networks": {},
-  "schemaVersion": "2.0.0",
-  "updatedAt": "2022-04-29T05:08:15.278Z"
+  "schemaVersion": "3.0.2",
+  "updatedAt": "2022-04-30T14:49:21.233Z",
+  "devdoc": {
+    "details": "Crowdsale with a limit for total contributions.",
+    "methods": {
+      "buyTokens(address)": {
+        "details": "low level token purchase ***DO NOT OVERRIDE*** This function has a non-reentrancy guard, so it shouldn't be called by another `nonReentrant` function.",
+        "params": {
+          "beneficiary": "Recipient of the token purchase"
+        }
+      },
+      "cap()": {
+        "return": "the cap of the crowdsale."
+      },
+      "capReached()": {
+        "details": "Checks whether the cap has been reached.",
+        "return": "Whether the cap was reached"
+      },
+      "constructor": {
+        "details": "Constructor, takes maximum amount of wei accepted in the crowdsale.",
+        "params": {
+          "cap": "Max amount of wei to be contributed"
+        }
+      },
+      "rate()": {
+        "return": "the number of token units a buyer gets per wei."
+      },
+      "token()": {
+        "return": "the token being sold."
+      },
+      "wallet()": {
+        "return": "the address where funds are collected."
+      },
+      "weiRaised()": {
+        "return": "the amount of wei raised."
+      }
+    },
+    "title": "CappedCrowdsale"
+  },
+  "userdoc": {
+    "methods": {}
+  }
 }

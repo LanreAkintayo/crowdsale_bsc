@@ -1,21 +1,33 @@
-pragma solidity 0.4.24;
+pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/crowdsale/Crowdsale.sol";
-import "openzeppelin-solidity/contracts/crowdsale/emission/MintedCrowdsale.sol";
-import "openzeppelin-solidity/contracts/crowdsale/validation/CappedCrowdsale.sol";
-import "openzeppelin-solidity/contracts/crowdsale/validation/TimedCrowdsale.sol";
-import "openzeppelin-solidity/contracts/crowdsale/distribution/RefundableCrowdsale.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
-import "openzeppelin-solidity/contracts/token/ERC20/PausableToken.sol";
+import "@openzeppelin/contracts/crowdsale/Crowdsale.sol";
+import "@openzeppelin/contracts/crowdsale/emission/MintedCrowdsale.sol";
+import "@openzeppelin/contracts/crowdsale/validation/CappedCrowdsale.sol";
+import "@openzeppelin/contracts/crowdsale/validation/TimedCrowdsale.sol";
+import "@openzeppelin/contracts/crowdsale/distribution/RefundableCrowdsale.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20Mintable.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20Pausable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+
+// import "openzeppelin-solidity/contracts/crowdsale/Crowdsale.sol";
+// import "openzeppelin-solidity/contracts/crowdsale/emission/MintedCrowdsale.sol";
+// import "openzeppelin-solidity/contracts/crowdsale/validation/CappedCrowdsale.sol";
+// import "openzeppelin-solidity/contracts/crowdsale/validation/TimedCrowdsale.sol";
+// import "openzeppelin-solidity/contracts/crowdsale/distribution/RefundableCrowdsale.sol";
+// import "openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
+// import "openzeppelin-solidity/contracts/token/ERC20/PausableToken.sol";
 
 
 
 
 contract LarTokenCrowdsale is Crowdsale, MintedCrowdsale, CappedCrowdsale, TimedCrowdsale, RefundableCrowdsale {
 
+  address tokenAddress;
+
   constructor(
     uint256 _rate,
-    address _wallet,
+    address payable _wallet,
     ERC20 _token,
     uint256 _cap,
     uint256 _openingTime,
@@ -28,26 +40,24 @@ contract LarTokenCrowdsale is Crowdsale, MintedCrowdsale, CappedCrowdsale, Timed
     RefundableCrowdsale(_goal)
     public
   {
+    tokenAddress = address(_token);
     require(_goal <= _cap, "Your goal cannot be greater than the maximum cap");
+
   }
 
    /**
    * @dev enables token transfers, called when owner calls finalize()
   */
-  function finalization() internal {
+  function _finalization() internal {
     // Any functionality after the end of the crowdsale is added here.
     if(goalReached()) {
-      MintableToken _mintableToken = MintableToken(token);
-      _mintableToken.finishMinting();
 
       // Unpause the token
-      PausableToken _pausableToken = PausableToken(token);
+      ERC20Pausable(tokenAddress).unpause();
 
-      _pausableToken.unpause();
-      _pausableToken.transferOwnership(wallet);
     }
 
-    super.finalization();
+    super._finalization();
   }
 
 }

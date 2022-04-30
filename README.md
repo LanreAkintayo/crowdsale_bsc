@@ -3,8 +3,8 @@ A crowdsale smart contract deployed on binance smart chain that manages how fund
 
 # Description
 The LARToken contract uses some OpenZeppelin contracts that added more functionalities to it.
-1. **PausableToken**: The token will have the normal standard features with an additional feature of pausing and unpausing the token. When the token is paused, It will not be able to be used to make any transaction. In other words, investors will not be able to use it for anything other than keeping it. This is what we actually want. The token should not be able to used in any transaction till the crowdsale is over.
-2. **MintableToken**: The token will only be produced/minted only when it is needed. That is, the total supply of the token is determined by the number of LARToken minted. 
+1. **ERC20Pausable**: The token will have the normal standard features with an additional feature of pausing and unpausing the token. When the token is paused, It will not be able to be used to make any transaction. In other words, investors will not be able to use it for anything other than keeping it. This is what we actually want. The token should not be able to used in any transaction till the crowdsale is over.
+2. **ERC20Mintable**: The token will only be produced/minted only when it is needed. That is, the total supply of the token is determined by the number of LARToken minted. 
 
 The LARTokenCrowdsale contract also extends some contracts in the OpenZeppelin library.
 1.  **MintedCrowdsale**: This provides the functionality of transferring some minted tokens to the investor buying it.
@@ -19,3 +19,4 @@ At the end of the crowdsale, the token is unpaused. So, it will be useful in mak
 2. Ganache
 3. Truffle framework
 4. Javascript
+5. Remix
